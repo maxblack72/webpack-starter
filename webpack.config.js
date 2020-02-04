@@ -5,7 +5,23 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   module: {
-    rules: [{
+    rules: [
+      {
+        test: /\.html.twig$/,
+        use: [
+          'raw-loader',
+          {
+            loader: 'twig-html-loader',
+            options: {
+              namespaces: {
+                'layouts': './src/views/layouts',
+                'components': './src/views/components',
+              }
+            }
+          }
+        ]
+      },
+      {
       test: [/.css$|.scss$/],
       use:[
         MiniCssExtractPlugin.loader,
@@ -32,7 +48,7 @@ module.exports = {
     new HtmlWebpackPlugin({
         title: 'Webpack 4 Starter',
         filename: 'index.html',
-        template: './src/index.html',
+        template: './src/views/index.html.twig',
         inject: true,
         minify: {
             removeComments: true,
@@ -42,7 +58,7 @@ module.exports = {
     new HtmlWebpackPlugin({
         title: 'About Page',
         filename: 'about.html',
-        template: './src/about.html',
+        template: './src/views/about.html.twig',
         inject: true,
         minify: {
             removeComments: true,
