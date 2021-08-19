@@ -1,5 +1,7 @@
-$color: red;
+
+@use './variables';
 
 body {
-    background-color: $color;
+  background-color: variables.$bg-color;
+  color: variables.$text-color;
 }
