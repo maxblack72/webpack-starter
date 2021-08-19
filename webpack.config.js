@@ -1,5 +1,6 @@
 const mode = process.env.NODE_ENV || "development";
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   // mode defaults to 'production' if not set
@@ -7,6 +8,21 @@ module.exports = {
 
   module: {
     rules: [
+      {
+        test: /\.html.twig$/,
+        use: [
+          'raw-loader',
+          {
+            loader: 'twig-html-loader',
+            options: {
+              namespaces: {
+                'layouts': './src/views/layouts',
+                'components': './src/views/components',
+              }
+            }
+          }
+        ]
+      },
       {
         test: /\.(s[ac]|c)ss$/i,
         use: [
@@ -34,7 +50,17 @@ module.exports = {
   },
 
   plugins: [
-    new MiniCssExtractPlugin()
+    new MiniCssExtractPlugin(),
+    new HtmlWebpackPlugin({
+      title: 'Webpack 4 Starter',
+      filename: 'index.html',
+      template: './src/views/index.html.twig',
+      inject: true,
+      minify: {
+          removeComments: true,
+          collapseWhitespace: false
+      }
+    })
   ],
 
   entry: './src/public/js/index.js',
