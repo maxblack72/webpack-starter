@@ -1,3 +1,5 @@
+const path = require('path');
+const fs = require('fs');
 const mode = process.env.NODE_ENV || "development";
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -18,10 +20,52 @@ module.exports = {
               namespaces: {
                 'layouts': './src/views/layouts',
                 'components': './src/views/components',
+              },
+              filters: {
+                asset_image(value) {
+                  let dist = './dist/assets/images';
+
+                  if (!fs.existsSync(dist)){
+                    fs.mkdirSync(dist, { recursive: true });
+                  }
+                  
+                  // File "destination.txt" will be created or overwritten by default.
+                  fs.copyFile('./src/public/assets/images/'+value, dist+"/"+value, (err) => {
+                    if (err) 
+                        throw err;
+                  });
+                  return 'assets/images/' + value;
+                }
               }
             }
           }
         ]
+      },
+      {
+        test: /\.(png|jpe?g|gif|svg)$/i,
+        /**
+         * The `type` setting replaces the need for "url-loader"
+         * and "file-loader" in Webpack 5.
+         *
+         * setting `type` to "asset" will automatically pick between
+         * outputing images to a file, or inlining them in the bundle as base64
+         * with a default max inline size of 8kb
+         */
+        type: "asset",
+        use: [
+          {
+            loader: 'file-loader'
+          },
+        ],
+        /**
+         * If you want to inline larger images, you can set
+         * a custom `maxSize` for inline like so:
+         */
+        // parser: {
+        //   dataUrlCondition: {
+        //     maxSize: 30 * 1024,
+        //   },
+        // },
       },
       {
         test: /\.(s[ac]|c)ss$/i,
@@ -45,16 +89,26 @@ module.exports = {
           // without additional settings, this will reference .babelrc
           loader: "babel-loader",
         },
-      },
+      }
     ],
   },
 
   plugins: [
     new MiniCssExtractPlugin(),
     new HtmlWebpackPlugin({
-      title: 'Webpack 4 Starter',
+      title: 'Webpack 5 Starter',
       filename: 'index.html',
       template: './src/views/index.html.twig',
+      inject: true,
+      minify: {
+          removeComments: true,
+          collapseWhitespace: false
+      }
+    }),
+    new HtmlWebpackPlugin({
+      title: 'About Page',
+      filename: 'about.html',
+      template: './src/views/about.html.twig',
       inject: true,
       minify: {
           removeComments: true,

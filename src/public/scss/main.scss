@@ -5,3 +5,9 @@ body {
   background-color: variables.$bg-color;
   color: variables.$text-color;
 }
+
+.cat{
+  background: transparent url('../assets/images/cat.jpg') no-repeat center top;
+  background-size: cover;
+  height: 300px;
+}
